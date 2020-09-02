@@ -15,6 +15,7 @@
 	<description>ApplicationTest Project</description>
 
 	<properties>
+		<start-class>com.israelcruz.demo.ApplicationTest</start-class>
 		<java.version>11</java.version>
 	</properties>
 
