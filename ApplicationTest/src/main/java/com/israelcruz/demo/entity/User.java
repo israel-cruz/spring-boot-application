@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -21,26 +23,33 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1671417246199538663L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-	@GenericGenerator(name = "native", strategy = "native")
+	@GeneratedValue(strategy=GenerationType.AUTO, generator="native")
+	@GenericGenerator(name="native", strategy="native")
 	private Long id;
 
 	@Column
+	@NotBlank
+	@Size(min=3, max=8, message="Length must be 3 to 8 characters.")
 	private String firstName;
 	@Column
+	@NotBlank
 	private String lastName;
 	@Column
+	@NotBlank
 	private String email;
 	@Column
+	@NotBlank
 	private String username;
 	@Column
+	@NotBlank
 	private String password;
 
 	@Transient
+	@NotBlank
 	private String confirmPassword;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="user_roles", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
 	private Set<Role> roles;
 
 	public User() {
