@@ -75,7 +75,7 @@ public class UserController {
 		return "user-form/user-view";
 	}
 	
-	@PostMapping("/editUser")
+	@PostMapping("/editUser") //editar o actualizar usuario
 	public String postEditUserForm(@Valid @ModelAttribute("userForm")User user, BindingResult result, ModelMap model) {
 		if(result.hasErrors()) {
 			model.addAttribute("userForm", user);
@@ -98,6 +98,16 @@ public class UserController {
 		model.addAttribute("userList", userService.getAllUsers());
 		model.addAttribute("roles", roleRepository.findAll());
 		return "user-form/user-view";
+	}
+	
+	@GetMapping("deleteUser/{id}")
+	public String deleteUser(Model model, @PathVariable(name="id")Long id) {
+		try {
+			userService.deleteUser(id);
+		} catch(Exception ex) {
+			model.addAttribute("listErrorMessage", ex.getMessage());
+		}
+		return userForm(model);
 	}
 	
 	
