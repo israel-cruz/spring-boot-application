@@ -15,17 +15,39 @@ public class UserServiceImplemt implements UserService {
 	UserRepository userRepository;
 	
 	@Override
+	public User createUser(User user) throws Exception {
+		if(checkUsernameAvailable(user) && checkIfPasswordMatch(user)) {
+			user = userRepository.save(user);
+		}
+		return user;
+	}
+
+	@Override
+	public User updateUser(User fromUser) throws Exception {
+		User toUser = getUserById(fromUser.getId());
+		mapUser(fromUser, toUser);
+		
+		return userRepository.save(toUser);
+	}
+	
+	// Mapear todo menos el password
+	protected void mapUser(User from, User to) {
+		to.setUsername(from.getUsername());
+		to.setFirstName(from.getFirstName());
+		to.setLastName(from.getLastName());
+		to.setEmail(from.getEmail());
+		to.setRoles(from.getRoles());
+	}
+	
+	@Override
 	public Iterable<User> getAllUsers() {
 		//return userRepository.findAllByStatus("active");
 		return userRepository.findAll();
 	}
 	
 	@Override
-	public User createUser(User user) throws Exception {
-		if(checkUsernameAvailable(user) && checkIfPasswordMatch(user)) {
-			user = userRepository.save(user);
-		}
-		return user;
+	public User getUserById(Long id) throws Exception {
+		return userRepository.findById(id).orElseThrow(() -> new Exception("User doesn't exist."));
 	}
 	
 	private boolean checkUsernameAvailable(User user) throws Exception {
@@ -38,10 +60,13 @@ public class UserServiceImplemt implements UserService {
 	}
 	
 	private boolean checkIfPasswordMatch(User user) throws Exception {
+		if(user.getConfirmPassword() == null || user.getConfirmPassword().isEmpty()) {
+			throw new Exception("Confirm password es obligatorio");
+		}
+		
 		if(!user.getPassword().equals(user.getConfirmPassword())) {
 			throw new Exception("Password doesn't match.");
 		}
 		return true;
 	}
-
 }
